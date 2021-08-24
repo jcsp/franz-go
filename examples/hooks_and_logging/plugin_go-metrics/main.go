@@ -17,6 +17,7 @@ import (
 )
 
 var (
+	host        = flag.String("host", "localhost", "The host to bind to")
 	debugPort   = flag.Int("debug-port", 9999, "localhost port that metrics can be curled from")
 	seedBrokers = flag.String("brokers", "localhost:9092", "comma delimited list of seed brokers")
 	topic       = flag.String("topic", "foo", "topic to consume for metric incrementing")
@@ -50,7 +51,7 @@ func main() {
 		http.Handle("/metrics", http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			metrics.WriteOnce(m.Registry(), w)
 		}))
-		log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *debugPort), nil))
+		log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", *host, *debugPort), nil))
 	}()
 
 	if *produce {
